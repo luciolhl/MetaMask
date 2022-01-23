@@ -19,31 +19,6 @@ function App() {
       return setMessage('MetaMask não esta instalada neste navegador.')
     }
 
-    setMessage('Tentando conectar na MestaMask e obter saldo...')
-
-    await window.ethereum.send('eth_requestAccounts')
-
-    const genericErc20Abi = Abi;
-    const tokenContractAddress = '0x3eAFE49a902B829557F7E60035f867AfEe3A3313';
-
-    const address = await window.ethereum.enable() 
-    let provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-
-    const contract = new ethers.Contract(tokenContractAddress, genericErc20Abi, provider);
-
-    const tokenContractWithSigner = contract.connect(signer);
-    //let balance = await provider.getBalance(address[0])
-    let balance = await tokenContractWithSigner.balances("0x90890046cd2243777604dc2d6808d85992e1021c");
-    //console.log(balance._hex)
-    setBalance(ethers.utils.formatEther(balance._hex));
-    setIsConnected(true)
-    setWallet(address[0])
-    setMessage('');
-    console.log();
-  }
-
-  async function transfer() {
     const genericErc20Abi = Abi;
     const tokenContractAddress = '0x3eAFE49a902B829557F7E60035f867AfEe3A3313';
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -54,9 +29,57 @@ function App() {
 
     const tokenContractWithSigner = contract.connect(signer);
 
-    const tx = await tokenContractWithSigner.transfer(toAddress, quantity);
+    const tx = tokenContractWithSigner.transfer("0xCb94e7b58242fcb31870cf298823976E4aCe0971", 1);
     console.log(tx);
-    /*if(!window.ethereum){
+
+    /*console.log(contract)
+    const transfer = await contract.transfer("0xCb94e7b58242fcb31870cf298823976E4aCe0971", 1);
+    const data = await transfer.encodeABI();
+    if(window.ethereum.chainId === '0x61'){
+      window.ethereum
+      .request({
+      method: 'eth_sendTransaction',
+      params: [
+          {
+              from: window.ethereumethereum.selectedAddress,
+              to: "0x90890046cd2243777604dC2d6808d85992e1021c",
+              gasPrice: '1000000',
+              gas: 10,
+              data: data, 
+      
+          },
+      ],
+      })
+      .then((txHash) => console.log(txHash))
+      .catch((error) => console.error);
+  } else {
+    window.ethereum.request({ method: 'wallet_switchEthereumChain', params:[{chainId: '0x61'}]})
+  }*/
+
+    /*const address = await window.ethereum.enable()
+    console.log(address)
+    const signer = provider.getSigner();
+    console.log(signer)*/
+    // const balance = (await contract.balanceOf(await provider.getBalance(address[0]))).toString();
+    // console.log(balance);
+
+    /*setMessage('Tentando conectar na MestaMask e obter saldo...')
+
+    await window.ethereum.send('eth_requestAccounts')
+
+    const address = await window.ethereum.enable() 
+    let provider = new ethers.providers.Web3Provider(window.ethereum);
+    let balance = await provider.getBalance(address[0])
+    setBalance(ethers.utils.formatEther(balance.toString()));
+    setIsConnected(true)
+    setWallet(address[0])
+    setMessage('');
+    console.log();*/
+  }
+
+  async function transfer() {
+  
+    if(!window.ethereum){
       return setMessage('MetaMask não esta instalada neste navegador.')
     }
   
@@ -75,7 +98,7 @@ function App() {
       value: ethers.utils.parseEther(quantity)
     })
   
-    setMessage(JSON.stringify(tx));*/
+    setMessage(JSON.stringify(tx));
   }
 
   return (
